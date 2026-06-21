@@ -111,9 +111,9 @@ export async function recalculateFromLatestSnapshot(snapshotId: string) {
     let changed = false;
 
     // ── Confirmed full fill ──────────────────────────────────────────────────
-    // If the best sell price has crossed above the order's ask price the order
-    // has been fully matched by incoming sell orders.
-    if (snapshot.best_sell_price > order.ask_price && remainingQuantity > 0) {
+    // If the best buy price meets or exceeds the order's ask price the order
+    // has been fully matched by an incoming buy order.
+    if (snapshot.best_buy_price >= order.ask_price && remainingQuantity > 0) {
       estimatedFilledQuantity = order.original_quantity;
       predictedFilledQuantity = 0;
       remainingQuantity = 0;
@@ -125,7 +125,7 @@ export async function recalculateFromLatestSnapshot(snapshotId: string) {
         snapshot_id: snapshot.id,
         event_type: "confirmed_fill_increment",
         quantity_delta: order.original_quantity - order.estimated_filled_quantity,
-        reason: `Best sell moved above ask (${snapshot.best_sell_price} > ${order.ask_price}).`,
+        reason: `Best buy met ask (${snapshot.best_buy_price} >= ${order.ask_price}).`,
       });
     } else if (remainingQuantity > 0) {
       // ── Queue-position predicted fill ──────────────────────────────────────

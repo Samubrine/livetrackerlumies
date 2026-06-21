@@ -126,28 +126,34 @@ export function buildChartPoints(
 ): ChartPoint[] {
   const now = Date.now();
   const cutoff = now - rangeMsMap[range];
-  const activeOrders = orders.filter((order) => order.status !== "closed");
-  const activeAskPrice = activeOrders.length
-    ? activeOrders.reduce((sum, order) => sum + order.ask_price, 0) / activeOrders.length
-    : 0;
-  const confirmedFillQuantity = orders.reduce(
-    (sum, order) => sum + order.estimated_filled_quantity,
-    0,
-  );
-  const remainingQuantity = orders.reduce((sum, order) => sum + order.remaining_quantity, 0);
   const predictedFillQuantity = orders.reduce(
     (sum, order) => sum + order.predicted_filled_quantity,
     0,
   );
+  const activeOrders = orders.filter((order) => order.status !== "closed");
+  const activeAskPrice = activeOrders.length
+    ? activeOrders.reduce((sum, order) => sum + order.ask_price, 0) / activeOrders.length
+    : 0;
 
   return snapshots
     .filter((snapshot) => new Date(snapshot.captured_at).getTime() >= cutoff)
-    .map((snapshot) => ({
-      timestamp: formatTimestampLabel(snapshot.captured_at),
-      bestBuyPrice: snapshot.best_buy_price,
-      askPrice: activeAskPrice,
-      realizedPnl: confirmedFillQuantity * (activeAskPrice - snapshot.best_buy_price),
-      unrealizedPnl: remainingQuantity * (activeAskPrice - snapshot.best_buy_price),
-      predictedFillQuantity,
-    }));
+    .map((snapshot) => {
+      const realizedPnl = orders.reduce(
+        (sum, order) => sum + order.estimated_filled_quantity * (order.ask_price - snapshot.best_buy_price),
+        0,
+      );
+      const unrealizedPnl = orders.reduce(
+        (sum, order) => sum + order.remaining_quantity * (order.ask_price - snapshot.best_buy_price),
+        0,
+      );
+
+      return {
+        timestamp: formatTimestampLabel(snapshot.captured_at),
+        bestBuyPrice: snapshot.best_buy_price,
+        askPrice: activeAskPrice,
+        realizedPnl,
+        unrealizedPnl,
+        predictedFillQuantity,
+      };
+    });
 }

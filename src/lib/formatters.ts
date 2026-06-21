@@ -75,6 +75,6 @@ export function formatPlacedAt(timestamp: string) {
     timeZone: "UTC",
   })
     .format(new Date(timestamp))
-    .replace(",", "")
+    .replace(", ", " ")
     .concat(" UTC");
 }

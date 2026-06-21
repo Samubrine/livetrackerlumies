@@ -30,10 +30,6 @@ async function handleIngest(request: Request) {
   return Response.json(await runIngest());
 }
 
-export async function GET(request: Request) {
-  return handleIngest(request);
-}
-
 export async function POST(request: Request) {
   return handleIngest(request);
 }

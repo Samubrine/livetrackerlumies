@@ -30,10 +30,7 @@ export function normalizeCreateOrder(input: CreateOrderInput): TablesInsert<"ord
     estimated_filled_quantity: estimatedFilledQuantity,
     predicted_filled_quantity: input.predictedFilledQuantity,
     remaining_quantity: status === "closed" ? 0 : remainingQuantity,
-    status:
-      status === "closed"
-        ? "closed"
-        : deriveStatus(estimatedFilledQuantity, remainingQuantity),
+    status,
     note: input.note ?? null,
   };
 }
