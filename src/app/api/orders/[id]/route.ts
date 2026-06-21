@@ -1,4 +1,4 @@
-import { getOrderById, updateOrderRecord } from "@/lib/db/orders";
+import { deleteOrderRecord, getOrderById, updateOrderRecord } from "@/lib/db/orders";
 import { normalizeUpdateOrder } from "@/lib/orders/normalize";
 import { updateOrderSchema } from "@/lib/orders/validation";
 
@@ -29,4 +29,20 @@ export async function PATCH(
   const order = await updateOrderRecord(id, normalizeUpdateOrder(existing, parsed.data));
 
   return Response.json({ order });
+}
+
+export async function DELETE(
+  _request: Request,
+  context: RouteContext<"/api/orders/[id]">,
+) {
+  const { id } = await context.params;
+  const existing = await getOrderById(id);
+
+  if (!existing) {
+    return Response.json({ error: "Order not found" }, { status: 404 });
+  }
+
+  await deleteOrderRecord(id);
+
+  return Response.json({ ok: true, id });
 }

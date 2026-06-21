@@ -28,6 +28,6 @@ supabase gen types typescript --linked > src/lib/types/database.ts
 - Optionally set `INGEST_CRON_SECRET` and send it as `x-cron-secret` from Vercel cron.
 - For Vercel native cron auth, set `CRON_SECRET`. Vercel sends `Authorization: Bearer <CRON_SECRET>` on cron requests.
 - Vercel cron jobs hit your route with `GET`, so `/api/ingest` accepts both `GET` and `POST`.
-- On Vercel Hobby, high-frequency cron is not available. The included `vercel.json` uses daily scheduling as a deploy-safe default for cloud testing.
+- Native Vercel cron cannot run every 30 seconds. The included `vercel.json` uses every minute, which is the closest platform-native option on supported plans.
 - For instant testing after deploy, call `/api/ingest` manually from the browser, `curl`, or the Vercel Functions tab.
 - Revisit RLS before public launch, even if the site stays semi-private.

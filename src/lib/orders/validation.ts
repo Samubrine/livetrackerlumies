@@ -4,10 +4,10 @@ const statusSchema = z.enum(["open", "partial", "closed"]);
 
 export const createOrderSchema = z.object({
   placedAt: z.coerce.date().transform((value) => value.toISOString()),
-  askPrice: z.number().nonnegative(),
-  originalQuantity: z.number().positive(),
-  estimatedFilledQuantity: z.number().nonnegative().default(0),
-  predictedFilledQuantity: z.number().nonnegative().default(0),
+  askPrice: z.coerce.number().nonnegative(),
+  originalQuantity: z.coerce.number().positive(),
+  estimatedFilledQuantity: z.coerce.number().nonnegative().default(0),
+  predictedFilledQuantity: z.coerce.number().nonnegative().default(0),
   status: statusSchema.optional(),
   note: z.string().trim().max(280).nullable().optional(),
 });
@@ -15,10 +15,10 @@ export const createOrderSchema = z.object({
 export const updateOrderSchema = z
   .object({
     placedAt: z.coerce.date().transform((value) => value.toISOString()).optional(),
-    askPrice: z.number().nonnegative().optional(),
-    originalQuantity: z.number().positive().optional(),
-    estimatedFilledQuantity: z.number().nonnegative().optional(),
-    predictedFilledQuantity: z.number().nonnegative().optional(),
+    askPrice: z.coerce.number().nonnegative().optional(),
+    originalQuantity: z.coerce.number().positive().optional(),
+    estimatedFilledQuantity: z.coerce.number().nonnegative().optional(),
+    predictedFilledQuantity: z.coerce.number().nonnegative().optional(),
     status: statusSchema.optional(),
     note: z.string().trim().max(280).nullable().optional(),
   })

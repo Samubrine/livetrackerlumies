@@ -1,3 +1,8 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+
 import type { OrderRecord } from "@/lib/types/domain";
 
 type OrdersTableProps = {
@@ -11,8 +16,33 @@ const statusStyles: Record<OrderRecord["status"], string> = {
 };
 
 export function OrdersTable({ orders }: OrdersTableProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  function handleDelete(orderId: string) {
+    const confirmed = window.confirm("Delete this shared order?");
+
+    if (!confirmed) {
+      return;
+    }
+
+    setDeletingId(orderId);
+    startTransition(async () => {
+      const response = await fetch(`/api/orders/${orderId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        router.refresh();
+      }
+
+      setDeletingId(null);
+    });
+  }
+
   return (
-    <section className="rounded-[2rem] border border-white/10 bg-stone-950/60 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-sm">
+    <section className="rounded-[2rem] border border-white/10 bg-stone-950/60 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-sm xl:h-full xl:min-h-0 xl:overflow-hidden">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-stone-400">
@@ -25,7 +55,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
         </span>
       </div>
 
-      <div className="mt-5 overflow-x-auto">
+      <div className="mt-5 overflow-x-auto xl:h-[calc(100%-4.5rem)] xl:min-h-0 xl:overflow-auto">
         {orders.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] p-5 text-sm text-stone-400">
             No shared orders yet. Use `POST /api/orders` or the upcoming form to seed the first
@@ -43,6 +73,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                 <th className="pb-2 pr-4">Remaining</th>
                 <th className="pb-2 pr-4">Status</th>
                 <th className="pb-2">Note</th>
+                <th className="pb-2 text-right">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -63,6 +94,16 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                   </td>
                   <td className="rounded-r-2xl px-4 py-4 text-stone-400">
                     {order.note ?? "-"}
+                  </td>
+                  <td className="px-4 py-4 text-right">
+                    <button
+                      className="rounded-full border border-rose-300/20 bg-rose-400/10 px-3 py-1 text-xs font-medium text-rose-100 transition hover:bg-rose-400/20 disabled:cursor-not-allowed disabled:opacity-60"
+                      type="button"
+                      onClick={() => handleDelete(order.id)}
+                      disabled={isPending && deletingId === order.id}
+                    >
+                      {isPending && deletingId === order.id ? "Deleting..." : "Delete"}
+                    </button>
                   </td>
                 </tr>
               ))}

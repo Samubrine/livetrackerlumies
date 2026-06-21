@@ -79,3 +79,15 @@ export async function updateOrderRecord(
 
   return result.data;
 }
+
+export async function deleteOrderRecord(orderId: string) {
+  const supabase = createSupabaseAdminClient();
+
+  const result = await supabase.from("orders").delete().eq("id", orderId).select("id").single();
+
+  if (result.error) {
+    throw new Error(`Failed to delete order: ${result.error.message}`);
+  }
+
+  return result.data;
+}
