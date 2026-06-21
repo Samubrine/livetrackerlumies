@@ -1,0 +1,68 @@
+import type { OrderRecord } from "@/lib/types/domain";
+
+type OrdersTableProps = {
+  orders: OrderRecord[];
+};
+
+const statusStyles: Record<OrderRecord["status"], string> = {
+  open: "bg-sky-400/15 text-sky-100 ring-sky-300/20",
+  partial: "bg-amber-300/15 text-amber-50 ring-amber-200/20",
+  closed: "bg-emerald-400/15 text-emerald-100 ring-emerald-300/20",
+};
+
+export function OrdersTable({ orders }: OrdersTableProps) {
+  return (
+    <section className="rounded-[2rem] border border-white/10 bg-stone-950/60 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-sm">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-stone-400">
+            Shared ledger
+          </p>
+          <h2 className="mt-2 text-xl font-semibold text-stone-50">Sea Lumies orders</h2>
+        </div>
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-stone-300">
+          {orders.length} tracked orders
+        </span>
+      </div>
+
+      <div className="mt-5 overflow-x-auto">
+        <table className="min-w-full border-separate border-spacing-y-3 text-left text-sm text-stone-200">
+          <thead>
+            <tr className="text-xs uppercase tracking-[0.24em] text-stone-500">
+              <th className="pb-2 pr-4">Placed</th>
+              <th className="pb-2 pr-4">Ask</th>
+              <th className="pb-2 pr-4">Original Qty</th>
+              <th className="pb-2 pr-4">Confirmed Fill</th>
+              <th className="pb-2 pr-4">Predicted Fill</th>
+              <th className="pb-2 pr-4">Remaining</th>
+              <th className="pb-2 pr-4">Status</th>
+              <th className="pb-2">Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order) => (
+              <tr key={order.id} className="rounded-2xl bg-white/[0.035]">
+                <td className="rounded-l-2xl px-4 py-4 text-stone-300">{order.placedAt}</td>
+                <td className="px-4 py-4">{order.askPrice.toLocaleString()}</td>
+                <td className="px-4 py-4">{order.originalQuantity.toLocaleString()}</td>
+                <td className="px-4 py-4">{order.estimatedFilledQuantity.toLocaleString()}</td>
+                <td className="px-4 py-4">{order.predictedFilledQuantity.toLocaleString()}</td>
+                <td className="px-4 py-4">{order.remainingQuantity.toLocaleString()}</td>
+                <td className="px-4 py-4">
+                  <span
+                    className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ${statusStyles[order.status]}`}
+                  >
+                    {order.status}
+                  </span>
+                </td>
+                <td className="rounded-r-2xl px-4 py-4 text-stone-400">
+                  {order.note ?? "-"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
