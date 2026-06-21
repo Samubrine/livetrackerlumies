@@ -13,18 +13,25 @@ export function NotificationsFeed({ items }: NotificationsFeedProps) {
       <h2 className="mt-2 text-xl font-semibold text-stone-50">Live notifications</h2>
 
       <div className="mt-5 space-y-3">
-        {items.map((item) => (
-          <article
-            key={item.id}
-            className="rounded-2xl border border-amber-200/10 bg-amber-300/5 p-4"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-semibold text-amber-50">{item.title}</h3>
-              <span className="text-xs text-stone-400">{item.triggeredAt}</span>
-            </div>
-            <p className="mt-2 text-sm text-stone-300">{item.message}</p>
-          </article>
-        ))}
+        {items.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] p-4 text-sm text-stone-400">
+            No notifications yet. They will appear here once the recalculation engine starts
+            writing alert rows.
+          </div>
+        ) : (
+          items.map((item) => (
+            <article
+              key={item.id}
+              className="rounded-2xl border border-amber-200/10 bg-amber-300/5 p-4"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-sm font-semibold text-amber-50">{item.title}</h3>
+                <span className="text-xs text-stone-400">{item.triggeredAt}</span>
+              </div>
+              <p className="mt-2 text-sm text-stone-300">{item.message}</p>
+            </article>
+          ))
+        )}
       </div>
     </section>
   );

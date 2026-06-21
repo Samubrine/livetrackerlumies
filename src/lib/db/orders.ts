@@ -16,6 +16,22 @@ export async function listOrders() {
   return result.data;
 }
 
+export async function listActiveOrders() {
+  const supabase = createSupabaseAdminClient();
+
+  const result = await supabase
+    .from("orders")
+    .select("*")
+    .in("status", ["open", "partial"])
+    .order("placed_at", { ascending: false });
+
+  if (result.error) {
+    throw new Error(`Failed to list active orders: ${result.error.message}`);
+  }
+
+  return result.data;
+}
+
 export async function getOrderById(orderId: string) {
   const supabase = createSupabaseAdminClient();
 

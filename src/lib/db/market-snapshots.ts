@@ -1,5 +1,5 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import type { TablesInsert } from "@/lib/types/database";
+import type { Tables, TablesInsert } from "@/lib/types/database";
 
 export async function insertMarketSnapshot(snapshot: TablesInsert<"market_snapshots">) {
   const supabase = createSupabaseAdminClient();
@@ -15,4 +15,20 @@ export async function insertMarketSnapshot(snapshot: TablesInsert<"market_snapsh
   }
 
   return result.data;
+}
+
+export async function getSnapshotById(snapshotId: string) {
+  const supabase = createSupabaseAdminClient();
+
+  const result = await supabase
+    .from("market_snapshots")
+    .select("*")
+    .eq("id", snapshotId)
+    .maybeSingle();
+
+  if (result.error) {
+    throw new Error(`Failed to fetch snapshot: ${result.error.message}`);
+  }
+
+  return result.data as Tables<"market_snapshots"> | null;
 }

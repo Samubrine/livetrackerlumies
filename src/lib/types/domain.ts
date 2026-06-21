@@ -21,6 +21,17 @@ export type LiveMetricCard = {
   detail: string;
 };
 
+export type DashboardMetrics = {
+  realizedPnl: number;
+  unrealizedPnl: number;
+  predictedFillQuantity: number;
+  activeOrders: number;
+  lastMarketUpdate: string | null;
+  bestBuyPrice: number | null;
+  bestSellPrice: number | null;
+  movingWeek: number | null;
+};
+
 export type TimeRangeOption =
   | "30s"
   | "1m"

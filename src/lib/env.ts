@@ -7,7 +7,7 @@ const serverSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.url(),
   HYPIXEL_API_BASE_URL: z.url().default("https://api.hypixel.net"),
   HYPIXEL_API_KEY: z.string().optional(),
-  HYPIXEL_BAZAAR_PRODUCT_ID: z.string().min(1).default("SEA_LUMIES"),
+  HYPIXEL_BAZAAR_PRODUCT_ID: z.string().min(1).default("ENCHANTED_SEA_LUMIE"),
   INGEST_CRON_SECRET: z.string().optional(),
   CRON_SECRET: z.string().optional(),
 });

@@ -22,9 +22,8 @@ export function ChartPlaceholder({
           </p>
           <h2 className="mt-2 text-xl font-semibold text-stone-50">Live overview chart</h2>
           <p className="mt-2 max-w-2xl text-sm text-stone-400">
-            Phase 1 ships the dashboard shell first. The production chart will plot best buy,
-            active asks, realized and unrealized PnL, and predicted fills from raw snapshot
-            buckets.
+            Raw Supabase snapshots are now feeding this view. Next, the interactive chart will swap
+            in with real timeframe controls and live subscriptions.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -55,20 +54,26 @@ export function ChartPlaceholder({
           />
         </div>
         <div className="mt-6 h-64 rounded-[1.5rem] border border-white/10 bg-stone-900/70 p-4">
-          <div className="flex h-full items-end gap-2">
-            {points.map((point) => (
-              <div key={point.timestamp} className="flex h-full flex-1 items-end gap-1">
-                <div
-                  className="w-full rounded-t-full bg-sky-300/70"
-                  style={{ height: `${Math.max(point.bestBuyPrice / 18, 8)}%` }}
-                />
-                <div
-                  className="w-full rounded-t-full bg-amber-300/70"
-                  style={{ height: `${Math.max(point.askPrice / 18, 8)}%` }}
-                />
-              </div>
-            ))}
-          </div>
+          {points.length === 0 ? (
+            <div className="flex h-full items-center justify-center text-sm text-stone-400">
+              No snapshots yet for this timeframe. Trigger `/api/ingest` again and refresh.
+            </div>
+          ) : (
+            <div className="flex h-full items-end gap-2">
+              {points.map((point) => (
+                <div key={point.timestamp} className="flex h-full flex-1 items-end gap-1">
+                  <div
+                    className="w-full rounded-t-full bg-sky-300/70"
+                    style={{ height: `${Math.max(point.bestBuyPrice / 18, 8)}%` }}
+                  />
+                  <div
+                    className="w-full rounded-t-full bg-amber-300/70"
+                    style={{ height: `${Math.max(point.askPrice / 18, 8)}%` }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -26,42 +26,49 @@ export function OrdersTable({ orders }: OrdersTableProps) {
       </div>
 
       <div className="mt-5 overflow-x-auto">
-        <table className="min-w-full border-separate border-spacing-y-3 text-left text-sm text-stone-200">
-          <thead>
-            <tr className="text-xs uppercase tracking-[0.24em] text-stone-500">
-              <th className="pb-2 pr-4">Placed</th>
-              <th className="pb-2 pr-4">Ask</th>
-              <th className="pb-2 pr-4">Original Qty</th>
-              <th className="pb-2 pr-4">Confirmed Fill</th>
-              <th className="pb-2 pr-4">Predicted Fill</th>
-              <th className="pb-2 pr-4">Remaining</th>
-              <th className="pb-2 pr-4">Status</th>
-              <th className="pb-2">Note</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id} className="rounded-2xl bg-white/[0.035]">
-                <td className="rounded-l-2xl px-4 py-4 text-stone-300">{order.placedAt}</td>
-                <td className="px-4 py-4">{order.askPrice.toLocaleString()}</td>
-                <td className="px-4 py-4">{order.originalQuantity.toLocaleString()}</td>
-                <td className="px-4 py-4">{order.estimatedFilledQuantity.toLocaleString()}</td>
-                <td className="px-4 py-4">{order.predictedFilledQuantity.toLocaleString()}</td>
-                <td className="px-4 py-4">{order.remainingQuantity.toLocaleString()}</td>
-                <td className="px-4 py-4">
-                  <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ${statusStyles[order.status]}`}
-                  >
-                    {order.status}
-                  </span>
-                </td>
-                <td className="rounded-r-2xl px-4 py-4 text-stone-400">
-                  {order.note ?? "-"}
-                </td>
+        {orders.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] p-5 text-sm text-stone-400">
+            No shared orders yet. Use `POST /api/orders` or the upcoming form to seed the first
+            ledger entries.
+          </div>
+        ) : (
+          <table className="min-w-full border-separate border-spacing-y-3 text-left text-sm text-stone-200">
+            <thead>
+              <tr className="text-xs uppercase tracking-[0.24em] text-stone-500">
+                <th className="pb-2 pr-4">Placed</th>
+                <th className="pb-2 pr-4">Ask</th>
+                <th className="pb-2 pr-4">Original Qty</th>
+                <th className="pb-2 pr-4">Confirmed Fill</th>
+                <th className="pb-2 pr-4">Predicted Fill</th>
+                <th className="pb-2 pr-4">Remaining</th>
+                <th className="pb-2 pr-4">Status</th>
+                <th className="pb-2">Note</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order.id} className="rounded-2xl bg-white/[0.035]">
+                  <td className="rounded-l-2xl px-4 py-4 text-stone-300">{order.placedAt}</td>
+                  <td className="px-4 py-4">{order.askPrice.toLocaleString()}</td>
+                  <td className="px-4 py-4">{order.originalQuantity.toLocaleString()}</td>
+                  <td className="px-4 py-4">{order.estimatedFilledQuantity.toLocaleString()}</td>
+                  <td className="px-4 py-4">{order.predictedFilledQuantity.toLocaleString()}</td>
+                  <td className="px-4 py-4">{order.remainingQuantity.toLocaleString()}</td>
+                  <td className="px-4 py-4">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ${statusStyles[order.status]}`}
+                    >
+                      {order.status}
+                    </span>
+                  </td>
+                  <td className="rounded-r-2xl px-4 py-4 text-stone-400">
+                    {order.note ?? "-"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </section>
   );
