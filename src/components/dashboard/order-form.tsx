@@ -1,10 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent, type ReactNode } from "react";
 
 type OrderFormProps = {
   defaultPlacedAt: string;
+  onCreated?: () => Promise<void> | void;
 };
 
 type FormState = {
@@ -25,8 +25,7 @@ const initialFormState = (defaultPlacedAt: string): FormState => ({
   note: "",
 });
 
-export function OrderForm({ defaultPlacedAt }: OrderFormProps) {
-  const router = useRouter();
+export function OrderForm({ defaultPlacedAt, onCreated }: OrderFormProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [formState, setFormState] = useState<FormState>(initialFormState(defaultPlacedAt));
@@ -60,7 +59,7 @@ export function OrderForm({ defaultPlacedAt }: OrderFormProps) {
       }
 
       setFormState(initialFormState(new Date().toISOString().slice(0, 16)));
-      router.refresh();
+      await onCreated?.();
     });
   }
 
@@ -72,7 +71,7 @@ export function OrderForm({ defaultPlacedAt }: OrderFormProps) {
   }
 
   return (
-    <section className="rounded-[2rem] border border-white/10 bg-stone-950/60 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-sm xl:h-full xl:min-h-0 xl:overflow-auto">
+    <section className="rounded-[2rem] border border-white/10 bg-stone-950/60 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-sm xl:h-full xl:min-h-0 xl:overflow-auto">
       <p className="text-xs font-semibold uppercase tracking-[0.28em] text-stone-400">
         Shared entry
       </p>
@@ -82,8 +81,8 @@ export function OrderForm({ defaultPlacedAt }: OrderFormProps) {
         the page sees the same record set.
       </p>
 
-      <form className="mt-5 grid gap-3" onSubmit={handleSubmit}>
-        <div className="grid gap-3 sm:grid-cols-2">
+      <form className="mt-5 grid gap-4" onSubmit={handleSubmit}>
+        <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Placed at (UTC)">
             <input
               className={inputClassName}

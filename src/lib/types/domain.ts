@@ -60,3 +60,11 @@ export type NotificationFeedItem = {
   message: string;
   triggeredAt: string;
 };
+
+export type DashboardPayload = {
+  cards: LiveMetricCard[];
+  orders: OrderRecord[];
+  notifications: NotificationFeedItem[];
+  points: ChartPoint[];
+  activeRange: TimeRangeOption;
+};

@@ -1,12 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import type { OrderRecord } from "@/lib/types/domain";
 
 type OrdersTableProps = {
   orders: OrderRecord[];
+  onDeleted?: () => Promise<void> | void;
 };
 
 const statusStyles: Record<OrderRecord["status"], string> = {
@@ -15,8 +15,7 @@ const statusStyles: Record<OrderRecord["status"], string> = {
   closed: "bg-emerald-400/15 text-emerald-100 ring-emerald-300/20",
 };
 
-export function OrdersTable({ orders }: OrdersTableProps) {
-  const router = useRouter();
+export function OrdersTable({ orders, onDeleted }: OrdersTableProps) {
   const [isPending, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -34,7 +33,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
       });
 
       if (response.ok) {
-        router.refresh();
+        await onDeleted?.();
       }
 
       setDeletingId(null);
@@ -42,7 +41,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
   }
 
   return (
-    <section className="rounded-[2rem] border border-white/10 bg-stone-950/60 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-sm xl:h-full xl:min-h-0 xl:overflow-hidden">
+    <section className="rounded-[2rem] border border-white/10 bg-stone-950/60 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-sm xl:h-full xl:min-h-0 xl:overflow-hidden">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-stone-400">

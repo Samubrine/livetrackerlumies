@@ -18,13 +18,19 @@ type PnlChartProps = {
   points: ChartPoint[];
   activeRange: TimeRangeOption;
   availableRanges: TimeRangeOption[];
+  onRangeChange?: (range: TimeRangeOption) => void;
 };
 
-export function PnlChart({ points, activeRange, availableRanges }: PnlChartProps) {
+export function PnlChart({
+  points,
+  activeRange,
+  availableRanges,
+  onRangeChange,
+}: PnlChartProps) {
   const latest = points.at(-1);
 
   return (
-    <section className="min-w-0 overflow-hidden rounded-[2rem] border border-white/10 bg-stone-950/60 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-sm xl:h-full xl:min-h-0">
+    <section className="min-w-0 overflow-hidden rounded-[2rem] border border-white/10 bg-stone-950/60 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-sm xl:h-full xl:min-h-0">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-stone-400">
@@ -38,16 +44,18 @@ export function PnlChart({ points, activeRange, availableRanges }: PnlChartProps
         </div>
         <div className="flex flex-wrap gap-2">
           {availableRanges.map((range) => (
-            <span
+            <button
               key={range}
+              type="button"
+              onClick={() => onRangeChange?.(range)}
               className={`rounded-full px-3 py-1 text-xs ${
                 range === activeRange
                   ? "bg-amber-300 text-stone-950"
-                  : "border border-white/10 bg-white/5 text-stone-300"
+                  : "border border-white/10 bg-white/5 text-stone-300 hover:bg-white/10"
               }`}
             >
               {range}
-            </span>
+            </button>
           ))}
         </div>
       </div>
@@ -60,7 +68,7 @@ export function PnlChart({ points, activeRange, availableRanges }: PnlChartProps
         <MetricPreview label="Predicted fill" value={latest?.predictedFillQuantity ?? 0} />
       </div>
 
-      <div className="mt-5 min-w-0 overflow-hidden rounded-[1.5rem] border border-white/10 bg-stone-900/70 p-3 sm:p-4 xl:h-[calc(100%-11rem)] xl:min-h-[260px]">
+      <div className="mt-5 min-w-0 overflow-hidden rounded-[1.5rem] border border-white/10 bg-stone-900/70 p-3 sm:p-4 xl:h-[calc(100%-10.5rem)] xl:min-h-[300px]">
         {points.length === 0 ? (
           <div className="flex h-[260px] items-center justify-center text-sm text-stone-400 xl:h-full">
             No snapshots yet for this timeframe. Trigger `/api/ingest` again and refresh.

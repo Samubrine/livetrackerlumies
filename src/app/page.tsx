@@ -8,38 +8,20 @@ import {
   mapNotificationFeedItem,
   mapOrderRecord,
 } from "@/lib/dashboard";
-import { HeadlineCards } from "@/components/dashboard/headline-cards";
-import { NotificationsFeed } from "@/components/dashboard/notifications-feed";
-import { OrderForm } from "@/components/dashboard/order-form";
-import { OrdersTable } from "@/components/dashboard/orders-table";
-import { PnlChart } from "@/components/dashboard/pnl-chart";
-import type { ChartPoint, NotificationFeedItem, OrderRecord, TimeRangeOption } from "@/lib/types/domain";
+import { LiveDashboard } from "@/components/dashboard/live-dashboard";
+import type { DashboardPayload, TimeRangeOption } from "@/lib/types/domain";
 
 export const dynamic = "force-dynamic";
 
-const chartRanges: TimeRangeOption[] = [
-  "30s",
-  "1m",
-  "5m",
-  "15m",
-  "1h",
-  "3h",
-  "6h",
-  "12h",
-  "1d",
-  "3d",
-  "1w",
-];
-
 export default async function Home() {
   const activeRange: TimeRangeOption = "15m";
-  const defaultPlacedAt = new Date().toISOString().slice(0, 16);
-  let metricCards = buildMetricCards(
-    calculateDashboardMetrics([], null),
-  );
-  let mappedOrders: OrderRecord[] = [];
-  let mappedNotifications: NotificationFeedItem[] = [];
-  let chartPoints: ChartPoint[] = [];
+  let initialPayload: DashboardPayload = {
+    cards: buildMetricCards(calculateDashboardMetrics([], null)),
+    orders: [],
+    notifications: [],
+    points: [],
+    activeRange,
+  };
 
   try {
     const [orders, notifications, latestSnapshot, chartSnapshots] = await Promise.all([
@@ -50,37 +32,46 @@ export default async function Home() {
     ]);
 
     const metrics = calculateDashboardMetrics(orders, latestSnapshot);
-    metricCards = buildMetricCards(metrics);
-    mappedOrders = orders.map(mapOrderRecord);
-    mappedNotifications = notifications.map(mapNotificationFeedItem);
-    chartPoints = buildChartPoints(chartSnapshots, orders, activeRange);
+    initialPayload = {
+      cards: buildMetricCards(metrics),
+      orders: orders.map(mapOrderRecord),
+      notifications: notifications.map(mapNotificationFeedItem),
+      points: buildChartPoints(chartSnapshots, orders, activeRange),
+      activeRange,
+    };
   } catch {
-    metricCards = [
-      {
-        label: "Connection",
-        value: "Offline",
-        tone: "negative",
-        detail: "Supabase data was unavailable during this request.",
-      },
-      {
-        label: "Orders",
-        value: "0",
-        tone: "neutral",
-        detail: "Waiting for a successful database connection.",
-      },
-      {
-        label: "Snapshots",
-        value: "0",
-        tone: "neutral",
-        detail: "Run ingest again after the deployment environment is ready.",
-      },
-      {
-        label: "Status",
-        value: "Retry",
-        tone: "accent",
-        detail: "The page will recover automatically on the next successful request.",
-      },
-    ];
+    initialPayload = {
+      cards: [
+        {
+          label: "Connection",
+          value: "Offline",
+          tone: "negative",
+          detail: "Supabase data was unavailable during this request.",
+        },
+        {
+          label: "Orders",
+          value: "0",
+          tone: "neutral",
+          detail: "Waiting for a successful database connection.",
+        },
+        {
+          label: "Snapshots",
+          value: "0",
+          tone: "neutral",
+          detail: "Run ingest again after the deployment environment is ready.",
+        },
+        {
+          label: "Status",
+          value: "Retry",
+          tone: "accent",
+          detail: "The page will recover automatically on the next successful request.",
+        },
+      ],
+      orders: [],
+      notifications: [],
+      points: [],
+      activeRange,
+    };
   }
 
   return (
@@ -122,25 +113,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <div className="xl:shrink-0">
-          <HeadlineCards cards={metricCards} />
-        </div>
-
-        <div className="grid gap-6 xl:min-h-0 xl:flex-1 xl:grid-cols-[1.45fr_0.95fr] xl:overflow-hidden">
-          <div className="grid gap-6 xl:min-h-0 xl:grid-rows-[minmax(0,1.05fr)_minmax(0,0.95fr)] xl:overflow-hidden">
-            <PnlChart
-              points={chartPoints}
-              activeRange={activeRange}
-              availableRanges={chartRanges}
-            />
-            <OrdersTable orders={mappedOrders} />
-          </div>
-
-          <div className="grid gap-6 xl:min-h-0 xl:grid-rows-[minmax(0,0.95fr)_minmax(0,1.05fr)] xl:overflow-hidden">
-            <OrderForm defaultPlacedAt={defaultPlacedAt} />
-            <NotificationsFeed items={mappedNotifications} />
-          </div>
-        </div>
+        <LiveDashboard initialPayload={initialPayload} />
       </div>
     </main>
   );

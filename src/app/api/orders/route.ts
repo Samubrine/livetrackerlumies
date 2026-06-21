@@ -1,10 +1,11 @@
+import { mapOrderRecord } from "@/lib/dashboard";
 import { createOrderSchema } from "@/lib/orders/validation";
 import { listOrders, insertOrder } from "@/lib/db/orders";
 import { normalizeCreateOrder } from "@/lib/orders/normalize";
 
 export async function GET() {
   const orders = await listOrders();
-  return Response.json({ orders });
+  return Response.json({ orders: orders.map(mapOrderRecord) });
 }
 
 export async function POST(request: Request) {
