@@ -75,8 +75,8 @@ export default async function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_28%),radial-gradient(circle_at_bottom_left,_rgba(14,165,233,0.18),_transparent_24%),linear-gradient(180deg,_#19130e_0%,_#120f0d_45%,_#09090b_100%)] text-stone-100 xl:h-screen xl:overflow-hidden">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-4 sm:px-6 lg:px-8 lg:py-6 xl:h-full xl:min-h-0">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_28%),radial-gradient(circle_at_bottom_left,_rgba(14,165,233,0.18),_transparent_24%),linear-gradient(180deg,_#19130e_0%,_#120f0d_45%,_#09090b_100%)] text-stone-100">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
         <section className="overflow-hidden rounded-[2rem] border border-white/10 bg-black/20 px-5 py-6 shadow-[0_28px_90px_rgba(0,0,0,0.35)] backdrop-blur-sm sm:px-8 lg:px-10 lg:py-8 xl:shrink-0">
           <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">

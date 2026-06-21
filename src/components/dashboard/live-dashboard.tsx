@@ -84,6 +84,28 @@ export function LiveDashboard({ initialPayload }: LiveDashboardProps) {
     [activeRange],
   );
 
+  const ingestAndRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    setError(null);
+
+    try {
+      const ingestResponse = await fetch("/api/refresh", {
+        method: "POST",
+      });
+
+      if (!ingestResponse.ok) {
+        throw new Error("Ingest request failed.");
+      }
+
+      await refreshDashboard();
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error ? requestError.message : "Refresh ingest failed.",
+      );
+      setIsRefreshing(false);
+    }
+  }, [refreshDashboard]);
+
   useEffect(() => {
     const interval = window.setInterval(() => {
       void refreshDashboard();
@@ -111,7 +133,7 @@ export function LiveDashboard({ initialPayload }: LiveDashboardProps) {
         <HeadlineCards cards={payload.cards} />
       </div>
 
-      <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/15 px-4 py-3 text-sm text-stone-300 xl:shrink-0">
+      <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-black/15 px-4 py-3 text-sm text-stone-300 sm:flex-row sm:items-center sm:justify-between xl:shrink-0">
         <div className="min-w-0">
           <span className="font-medium text-stone-100">Live dashboard</span>
           <span className="ml-2 text-stone-400">
@@ -122,14 +144,14 @@ export function LiveDashboard({ initialPayload }: LiveDashboardProps) {
         <button
           className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-100 transition hover:bg-white/10"
           type="button"
-          onClick={() => void refreshDashboard()}
+          onClick={() => void ingestAndRefresh()}
         >
-          Refresh now
+          {isRefreshing ? "Refreshing..." : "Refresh + ingest"}
         </button>
       </div>
 
-      <div className="grid gap-5 xl:min-h-0 xl:flex-1 xl:grid-cols-[1.5fr_0.95fr] xl:overflow-hidden">
-        <div className="grid gap-5 xl:min-h-0 xl:grid-rows-[minmax(340px,0.95fr)_minmax(280px,1.05fr)] xl:overflow-hidden">
+      <div className="grid gap-5 xl:grid-cols-[1.5fr_0.95fr]">
+        <div className="grid gap-5 xl:grid-rows-[minmax(340px,0.95fr)_minmax(280px,1.05fr)]">
           <PnlChart
             points={payload.points}
             activeRange={activeRange}
@@ -139,7 +161,7 @@ export function LiveDashboard({ initialPayload }: LiveDashboardProps) {
           <OrdersTable orders={payload.orders} onDeleted={handleOrderDeleted} />
         </div>
 
-        <div className="grid gap-5 xl:min-h-0 xl:grid-rows-[minmax(300px,0.9fr)_minmax(260px,1.1fr)] xl:overflow-hidden">
+        <div className="grid gap-5 xl:grid-rows-[minmax(300px,0.9fr)_minmax(260px,1.1fr)]">
           <OrderForm defaultPlacedAt={defaultPlacedAt} onCreated={handleOrderCreated} />
           <NotificationsFeed items={payload.notifications} />
         </div>
