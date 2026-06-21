@@ -66,8 +66,8 @@ export function parseBazaarSnapshot(
     buy_orders: product.quick_status.buyOrders ?? null,
     sell_orders: product.quick_status.sellOrders ?? null,
     source_last_updated: parsed.data.lastUpdated ?? null,
-    top_buy_summary: product.buy_summary?.slice(0, 5) ?? null,
-    top_sell_summary: product.sell_summary?.slice(0, 5) ?? null,
+    top_buy_summary: product.buy_summary?.slice(0, 20) ?? null,
+    top_sell_summary: product.sell_summary?.slice(0, 20) ?? null,
     raw_payload: parsed.data,
   };
 }

@@ -108,11 +108,11 @@ export function LiveDashboard({ initialPayload }: LiveDashboardProps) {
 
   useEffect(() => {
     const interval = window.setInterval(() => {
-      void refreshDashboard();
+      void ingestAndRefresh();
     }, 15000);
 
     return () => window.clearInterval(interval);
-  }, [refreshDashboard]);
+  }, [ingestAndRefresh]);
 
   function handleRangeChange(range: TimeRangeOption) {
     setActiveRange(range);
@@ -137,7 +137,7 @@ export function LiveDashboard({ initialPayload }: LiveDashboardProps) {
         <div className="min-w-0">
           <span className="font-medium text-stone-100">Live dashboard</span>
           <span className="ml-2 text-stone-400">
-            {isRefreshing ? "Refreshing..." : "Polling every 15s"}
+            {isRefreshing ? "Ingesting..." : "Ingesting every 15s"}
           </span>
           {error ? <span className="ml-2 text-rose-300">{error}</span> : null}
         </div>
